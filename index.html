@@ -57,7 +57,7 @@
     }
 
     .amount {
-      font-size: 36px;
+      font-size: 32px;
       font-weight: bold;
       margin-top: 8px;
     }
@@ -71,11 +71,6 @@
       color: white;
       font-size: 18px;
       font-weight: bold;
-      cursor: pointer;
-    }
-
-    .watch:active {
-      transform: scale(0.98);
     }
 
     .cards {
@@ -127,11 +122,13 @@
     </div>
 
     <div class="balance">
-      <div class="balance-label">YOUR BALANCE</div>
-      <div class="amount">₦<span id="balance">0</span></div>
+      <div class="balance-label">YOUR USDT BALANCE</div>
+      <div class="amount">
+        <span id="balance">0.00000000</span> USDT
+      </div>
     </div>
 
-    <button class="watch" onclick="watchVideo()">
+    <button class="watch" id="watchButton" disabled>
       ▶️ Watch & Earn
     </button>
 
@@ -146,61 +143,92 @@
       <div class="card">
         <div class="icon">👥</div>
         <div class="card-title">Referral</div>
-        <div class="card-text">Invite friends</div>
+        <div class="card-text">Coming soon</div>
       </div>
 
       <div class="card">
         <div class="icon">💸</div>
         <div class="card-title">Withdraw</div>
-        <div class="card-text">Coming soon</div>
+        <div class="card-text">Minimum 0.1 USDT</div>
       </div>
 
       <div class="card">
         <div class="icon">📋</div>
         <div class="card-title">Tasks</div>
-        <div class="card-text">More tasks soon</div>
+        <div class="card-text">Coming soon</div>
       </div>
 
     </div>
 
     <div class="status" id="status">
-      Watch a video to earn your first reward.
+      Connecting to Watch2Earn...
     </div>
 
   </div>
 
   <script>
-    let balance = 0;
+    const SUPABASE_URL =
+      "https://txnanaothvrokqkduvpz.supabase.co";
 
-    function watchVideo() {
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_iOCf8fKCreK6dcpOeKo3yA_EedkDtaB";
 
-      const button = document.querySelector(".watch");
+    const FUNCTION_URL =
+      SUPABASE_URL + "/functions/v1/watch-reward";
+
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    async function loadAccount() {
       const status = document.getElementById("status");
+      const balance = document.getElementById("balance");
+      const button = document.getElementById("watchButton");
 
-      button.disabled = true;
-      button.innerText = "⏳ Watching...";
+      try {
+        if (!tg.initData) {
+          throw new Error("Please open Watch2Earn from Telegram.");
+        }
 
-      status.innerText = "Demo video playing...";
+        status.innerText = "Loading your account...";
 
-      setTimeout(function() {
+        const response = await fetch(FUNCTION_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_PUBLISHABLE_KEY
+          },
+          body: JSON.stringify({
+            initData: tg.initData
+          })
+        });
 
-        balance += 10;
+        const data = await response.json();
 
-        document.getElementById("balance").innerText = balance;
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Unable to load account.");
+        }
+
+        balance.innerText =
+          Number(data.user.balance_usdt || 0).toFixed(8);
 
         button.disabled = false;
-        button.innerText = "▶️ Watch & Earn";
 
-        status.innerText = "🎉 You earned ₦10!";
+        status.innerText =
+          "Account connected successfully.";
 
-      }, 5000);
+      } catch (error) {
+        console.error(error);
+
+        status.innerText =
+          "❌ " + error.message;
+
+        button.disabled = true;
+      }
     }
 
-    // Tell Telegram the Mini App is ready
-    if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-    }
+    loadAccount();
   </script>
 
 </body>
