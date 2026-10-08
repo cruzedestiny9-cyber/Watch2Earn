@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch2Earn</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #17202a;
+    }
+
+    .app {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .logo {
+      font-size: 42px;
+    }
+
+    h1 {
+      margin: 8px 0;
+    }
+
+    .subtitle {
+      color: #697586;
+    }
+
+    .balance {
+      background: #111827;
+      color: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .balance-label {
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    .amount {
+      font-size: 36px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .watch {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 18px;
+      background: #229ed9;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .watch:active {
+      transform: scale(0.98);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 28px;
+    }
+
+    .card-title {
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .card-text {
+      margin-top: 5px;
+      color: #697586;
+      font-size: 13px;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 18px;
+      color: #697586;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="header">
+      <div class="logo">💰</div>
+      <h1>Watch2Earn</h1>
+      <div class="subtitle">Watch. Earn. Repeat.</div>
+    </div>
+
+    <div class="balance">
+      <div class="balance-label">YOUR BALANCE</div>
+      <div class="amount">₦<span id="balance">0</span></div>
+    </div>
+
+    <button class="watch" onclick="watchVideo()">
+      ▶️ Watch & Earn
+    </button>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="icon">🎁</div>
+        <div class="card-title">Daily Bonus</div>
+        <div class="card-text">Coming soon</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">👥</div>
+        <div class="card-title">Referral</div>
+        <div class="card-text">Invite friends</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">💸</div>
+        <div class="card-title">Withdraw</div>
+        <div class="card-text">Coming soon</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">📋</div>
+        <div class="card-title">Tasks</div>
+        <div class="card-text">More tasks soon</div>
+      </div>
+
+    </div>
+
+    <div class="status" id="status">
+      Watch a video to earn your first reward.
+    </div>
+
+  </div>
+
+  <script>
+    let balance = 0;
+
+    function watchVideo() {
+
+      const button = document.querySelector(".watch");
+      const status = document.getElementById("status");
+
+      button.disabled = true;
+      button.innerText = "⏳ Watching...";
+
+      status.innerText = "Demo video playing...";
+
+      setTimeout(function() {
+
+        balance += 10;
+
+        document.getElementById("balance").innerText = balance;
+
+        button.disabled = false;
+        button.innerText = "▶️ Watch & Earn";
+
+        status.innerText = "🎉 You earned ₦10!";
+
+      }, 5000);
+    }
+
+    // Tell Telegram the Mini App is ready
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+
+</body>
+  </html>
